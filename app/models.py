@@ -34,7 +34,7 @@ class Post(db.Model):
 
 
     def __repr__(self):
-        return '<Post %r>' % (self.username)
+        return '<Post %r>' % (self.user_id)
     
 
 
@@ -61,7 +61,7 @@ class Like(db.Model):
 
 
     def __repr__(self):
-        return '<Like %r>' % (self.username)
+        return '<Like %r>' % (self.post_id)
     
 
 
