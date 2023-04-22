@@ -35,6 +35,24 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/ExploreView.vue')
+    },
+    {
+      path: '/Myprofile',
+      name: 'Myprofile',
+      //View/Explore all posts by all users
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/Myprofile.vue')
+    },
+    {
+      path: '/logout',
+      name: 'logout',
+      //View/Explore all posts by all users
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/Logout.vue')
     }
 
   ]
