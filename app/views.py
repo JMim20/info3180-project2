@@ -102,8 +102,8 @@ def logout():
     logout_user()
     return jsonify({
                 "message": "You have been logged out!",
-            }) """
-
+            })
+ """
 ###
 # The functions below should be applicable to all Flask apps.
 ###
