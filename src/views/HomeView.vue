@@ -1,4 +1,4 @@
-<script>
+<script>   
   
 </script>
 
@@ -67,7 +67,7 @@
   button{
     border: none;
     color: white;
-    padding: 15px 80px;
+    padding: 15px 15%;
     text-align: center;
     text-decoration: none;
     display: inline-block;
@@ -81,7 +81,7 @@
 
   .reg{
     background-color: forestgreen;
-    margin-left: 80px;
+    margin-left: 10%;
    
   }
 
