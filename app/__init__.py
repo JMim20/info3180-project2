@@ -5,6 +5,7 @@ from .config import Config
 from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager
 
+
 app = Flask(__name__)
 app.config.from_object(Config)
 
