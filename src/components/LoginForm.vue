@@ -1,8 +1,7 @@
 <template>
-    
+    <H5>Login </H5>
     <div class="login-container">
         <form @submit.prevent="loginUser" id="loginForm" method="post" enctype="multipart/form-data">
-            <h1>Login </h1>
             <div id="LoginForm">
                 <label for="username">Username</label>
                 <input 
@@ -21,12 +20,13 @@
                  type="password"
                  v-model="title"
                 placeholder="Enter password"
-                equired
+                required
                 />
 
                 <button type="submit" class="submit-btn">LOGIN</button>
-            </div>
+                </div>
         </form>
+        <p v-if="showError" id="error">Username or Password is incorrect</p>
     </div>
 </template>
 <script>
@@ -78,10 +78,9 @@
 </script>
 <style>
 h5{
-  
+  margin-top:10%;
    margin-left:35%;
    font-weight:bold;
-
     
 }
     .login-container{
