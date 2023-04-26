@@ -1,7 +1,7 @@
 <template>
     <H5>Login </H5>
     <div class="login-container">
-        <form @submit.prevent="loginUser" id="loginForm" method="post" enctype="multipart/form-data">
+        <form @submit.prevent="loginUser" id="loginForm" method="post" enctype="multipart/form-data">       
             <div id="LoginForm">
                 <label for="username">Username</label>
                 <input 
@@ -22,8 +22,8 @@
                 placeholder="Enter password"
                 required
                 />
-
-                <button type="submit" class="submit-btn">LOGIN</button>
+                <button type="submit" class="submit-btn" onclick="window.location.href='/explore'">LOGIN</button>
+      
                 </div>
         </form>
         <p v-if="showError" id="error">Username or Password is incorrect</p>
