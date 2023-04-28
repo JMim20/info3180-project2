@@ -1,10 +1,10 @@
 <template>
     <div class = "container-login">
-        <h2> Login </h2>
             <LoginForm/>
     </div>
 </template>
-<script>
+
+<script >
 import LoginForm from "../components/LoginForm.vue";
 export default{
     name:"LoginView",
