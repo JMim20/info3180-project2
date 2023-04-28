@@ -1,6 +1,6 @@
 <template>
     <div class = "container-login">
-        <h2> Login <h2>
+        <h2> Login </h2>
             <LoginForm/>
     </div>
 </template>
