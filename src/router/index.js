@@ -1,5 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import RegisterForm from '../components/RegisterForm.vue'
+import LoginForm from '../components/LoginForm.vue'
+import ExploreView from '../views/ExploreView.vue'
+const token = localStorage.getItem("token")
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,7 +20,8 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('../views/RegisterView.vue')
+      component: () => import('../views/RegisterView.vue'),
+      meta: {auth: false}
     },
     {
       path: '/login',
@@ -25,7 +30,8 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('../views/LoginView.vue')
+      component: () => import('../views/LoginView.vue'),
+      meta: {auth: false}
     },
     {
       path: '/explore',
@@ -34,7 +40,8 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('../views/ExploreView.vue')
+      component: () => import('../views/ExploreView.vue'),
+      meta: {auth: true}
     },
     {
       path: '/profile',
@@ -63,8 +70,20 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../components/NewPostForm.vue')
     }
-
   ]
+  
 })
-
+// routing and redirecting all users according to authentication
+// routing and redirecting all users according to authentication
+router.beforeEach((to, from, next) => {
+  if (to.meta.auth && !token) {
+    next("/login")
+  } else if (!to.meta.auth && token) {
+    next("/explore")
+  } else {
+    next()
+  }
+})
 export default router
+
+
