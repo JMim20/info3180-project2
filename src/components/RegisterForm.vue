@@ -1,4 +1,5 @@
-<template>  
+
+   <template>  
     <h5> Register </h5>
     <div class= "register-container" > 
     <form @submit.prevent="registerUser" id="registerForm" method="POST" enctype="miultipart/form-data" >
@@ -80,8 +81,12 @@
         required
         >
     </div>
-        <input id="file" name="image" type="file" @change="onSelect" class="submits">
-        <button type="submit" class="submit-btn"> Register </button>
+        <input id="file" name="image" type="file" @change="onSelect" class="submits" placeholder="Name"/>
+        <button type="submit" class="submit-btn">Sign Up</button>
+        <p class="forgot-password text-right">
+                Already registered 
+                <router-link :to="{name: 'login'}">sign in?</router-link>
+            </p>
     </div>
     </form>
     </div>
@@ -143,6 +148,13 @@
     </script>
     
     <style>
+        .screen {		
+	background: linear-gradient(90deg, #675eac, #7C78B8);		
+	position: relative;	
+	height: 300px;
+	width: 360px;	
+	box-shadow: 0px 0px 24px #5C5696;
+}
 
     h5{
         margin-top:3%;
