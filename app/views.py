@@ -6,7 +6,7 @@ This file creates your application.
 """
 
 from app import app, db, login_manager
-from flask import render_template, jsonify, request, send_file, send_from_directory, url_for
+from flask import render_template, jsonify, request, send_file, send_from_directory, url_for,flash,redirect,url_for,Blueprint
 from flask_wtf.csrf import generate_csrf
 import os
 from .models import Post, Like,Follow, User
@@ -82,10 +82,10 @@ def register():
             biography = form.biography.data
             profile_photo = form.profile_photo.data
             
-            #filename= secure_filename(profile_photo.filename)
-            #profile_photo.save(os.path.join(app.config['UPLOAD_FOLDER'], profile_photo))
+            filename= secure_filename(profile_photo.filename)
+            profile_photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-            newUser= User(username,password, firstname, lastname, email, location, biography,  profile_photo)
+            newUser= User(username,password, firstname, lastname, email, location, biography,  filename)
             db.session.add(newUser)
             db.session.commit()
             
@@ -108,6 +108,8 @@ def register():
         
 #Login Route- Accepts login credentials as username and password
 
+...
+
 @app.route('/api/v1/auth/login', methods=['POST'])
 def login():
     form = LoginForm()
@@ -118,11 +120,6 @@ def login():
         user = db.session.execute(db.select(User).filter_by(username=username)).scalar()
     
         if user is not None and check_password_hash(user.password, password):
-            # remember_me = False
-
-            # if 'remember_me' in request.form:
-            #     remember_me = True
-
             login_user(user)
             return jsonify({
                 "message": "logged in Successfully!",

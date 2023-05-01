@@ -104,7 +104,7 @@ class User(db.Model):
     email=db.Column(db.String(200), nullable = False)
     location=db.Column(db.String(200), nullable = False)
     biography=db.Column(db.String(300), nullable = False)
-    profile_photo=db.Column(db.Text())
+    profile_photo=db.Column(db.Text(),nullable = False)
     joined_on = db.Column(db.DateTime(), nullable = False)
 
 

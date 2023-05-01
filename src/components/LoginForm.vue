@@ -22,7 +22,7 @@
                 placeholder="Enter password"
                 required
                 />
-                <button type="submit" class="submit-btn" onclick="window.location.href='/explore'">LOGIN</button>
+                <button type="submit" class="submit-btn">LOGIN</button>
       
                 </div>
         </form>
@@ -53,8 +53,6 @@
             loginUser(){
                 let loginForm = document.getElementById('loginForm');
                 let form_data = new FormData(loginForm);
-                form_data.append("username", this.username);
-                form_data.append("password", this.password);
                 fetch("/api/v1/auth/login", {
                     method: 'POST',
                     body: form_data,
@@ -71,7 +69,7 @@
                     
                 })
                 .catch(function (error) {
-                    console.log(error);
+                    console.log('error');
                 });
             }
         },
