@@ -7,6 +7,7 @@ This file creates your application.
 
 from app import app, db, login_manager
 from flask import render_template, jsonify, request, send_file, send_from_directory, url_for
+from flask_wtf.csrf import generate_csrf
 import os
 from .models import Post, Like,Follow, User
 from werkzeug.utils import secure_filename
@@ -51,6 +52,11 @@ def requires_auth(f):
   return decorated
 
 
+@app.route('/api/v1/csrf-token', methods=['GET'])
+def get_csrf():
+    return jsonify({'csrf_token': generate_csrf()})
+
+
 
 ###
 # Routing for your application.
@@ -76,12 +82,13 @@ def register():
             biography = form.biography.data
             profile_photo = form.profile_photo.data
             
-            filename= secure_filename(profile_photo.filename)
-            profile_photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            #filename= secure_filename(profile_photo.filename)
+            #profile_photo.save(os.path.join(app.config['UPLOAD_FOLDER'], profile_photo))
 
-            newUser= User(username,password, firstname, lastname, email, location, biography, filename)
+            newUser= User(username,password, firstname, lastname, email, location, biography,  profile_photo)
             db.session.add(newUser)
             db.session.commit()
+            
 
             return jsonify({
                 "message": "User Successfully registered",

@@ -29,52 +29,56 @@
         <p v-if="showError" id="error">Username or Password is incorrect</p>
     </div>
 </template>
-<script>
- export default {
-    created(){
-        this.getCsrfToken();
-    },
-    
-    data(){
-        return {
-            csrf_token: ''
-        }
-    },
-    methods : {
-        loginUser(){
-            let loginForm = document.getElementById('loginForm');
-            let form_data = new FormData(loginForm);
-            fetch("/api/v1/auth/login", {
-                method: 'POST',
-                body: form_data,
-                headers: {'X-CSRFToken': this.csrf_token}
-            })
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (data) {
-                // display a success message
-                
-                if (data.status == 200){
-                    
-                }
-                
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-        },
-        getCsrfToken() {
-            let self = this;
-            fetch('/api/csrf-token')
+<script set>
+    import { ref, onMounted} from "vue";
+    let csrf_token = ref("");
+        function getCsrfToken() {
+            fetch('/api/v1/csrf-token')
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
-                self.csrf_token = data.csrf_token;
-            })
+                csrf_token.value = data.csrf_token;
+            });
         }
-    },   
-}
+        export default {
+            data() {
+                return {
+                    username:'',
+                    password:''
+
+                };
+            },
+       
+        methods : {
+            loginUser(){
+                let loginForm = document.getElementById('loginForm');
+                let form_data = new FormData(loginForm);
+                form_data.append("username", this.username);
+                form_data.append("password", this.password);
+                fetch("/api/v1/auth/login", {
+                    method: 'POST',
+                    body: form_data,
+                    headers: {'X-CSRFToken': this.csrf_token}
+                })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    // display a success message
+                    if (data.status == 200){
+                        
+                    }
+                    
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+            }
+        },
+        mounted() {
+                    getCsrfToken();
+                },
+        }
 </script>
 <style>
 h5{

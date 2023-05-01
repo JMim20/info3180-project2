@@ -53,9 +53,9 @@
   }
 
   hr{
-    height: 2px;
-    margin-left: 20px;
-    margin-right: 20px;
+    height: 1%;
+    margin-left: 1em;
+    margin-right: 2em;
   }
 
   p{
@@ -67,12 +67,12 @@
   button{
     border: none;
     color: white;
-    padding: 15px 15%;
+    padding: 2% 15%;
     text-align: center;
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
-    margin: 4px 2px;
+    margin: 1% 1%;
     cursor: pointer;
     border-radius: 1px;
     
