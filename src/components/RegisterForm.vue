@@ -1,5 +1,5 @@
-
-   <template>  
+<template>
+    <div id="error_message"></div>
     <h5> Register </h5>
     <div class= "register-container" > 
     <form @submit.prevent="registerUser" id="registerForm" method="POST" enctype="miultipart/form-data" >
@@ -7,154 +7,144 @@
         <div class="registerfield col">
         <label for="username">Username</label>
         <input
-        v-model="title"
         name="username"
         type="text"
         class="submits"
         placeholder="Enter username"
-        required
-        >
+        required>
         </div>
         <div class="registerfield col">
         <label for="password">Password</label>
         <input
-        v-model="title"
+       
         name="password"
-        type="text"
+        type="password"
         class="submits"
         placeholder="Enter password"
-        required
-        >
+        required>
     </div>
         <div class="registerfield col">
         <label for="firstname">Firstname</label>
         <input
-        v-model="title"
         name="firstname"
         type="text"
         class="submits"
         placeholder="Enter Firstname"
-        required
-        >
+        required>
     </div>
         <div class="registerfield col">
         <label for="lastname">Lastname</label>
         <input
-        v-model="title"
+       
         name="lastname"
         type="text"
         class="submits"
         placeholder="Enter lastname"
-        required
-        >
+        required>
     </div>
         <div class="registerfield col">
         <label for="email">Email</label>
         <input
-        v-model="title"
+       
         name="email"
         type="text"
         class="submits"
         placeholder="Enter email"
-        required
-        >
+        required>
     </div>
         <div class="registerfield col">
         <label for="location">Location</label>
         <input
-        v-model="title"
+       
         name="location"
         type="text"
         class="submits"
         placeholder="Enter location"
-        required
-        >
+        required>
     </div>
         <div class="registerfield col">
         <label for="biography">Biography</label>
         <input
-        v-model="title"
+       
         name="biography"
         type="text"
         class="submits"
         placeholder="Enter biography"
-        required
-        >
-    </div>
-        <input id="file" name="image" type="file" @change="onSelect" class="submits" placeholder="Name"/>
-        <button type="submit" class="submit-btn">Sign Up</button>
-        <p class="forgot-password text-right">
-                Already registered 
-                <router-link :to="{name: 'login'}">sign in?</router-link>
-            </p>
+        required>
+    </div><br>
+        <input id="file" name="photo" type="file" class="submits" required>
+        <button type="submit" class="submit-btn" onclick="window.location.href='/login'"> Register </button>
     </div>
     </form>
     </div>
     </template>
-    <script>
-     import { ref, onMounted } from "vue";
-    onMounted(() => {
-    getCsrfToken();
-    });
-    let csrf_token = ref("");
-    export default{
-        name: 'RegisterForm',
-        data(){
-            return{
-                csrf_token: '',
-                errors: [],
-                success:false
-            }
-        },
-        created(){
-            this.getCsrfToken();
-        },
+    <script set>
+        import { ref, onMounted} from "vue";
+        let csrf_token = ref("");
+        function getCsrfToken() {
+            fetch('/api/v1/csrf-token')
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                csrf_token.value = data.csrf_token;
+            });
+        }
+        export default {
+            data() {
+                return {
+                    username: '',
+                    password: '',
+                    firstName: '',
+                    lastName: '',
+                    email: '',
+                    location: '',
+                    biography: '',
+                    photo: ''
+             };
+
+                },
         methods : {
-            registerUser(){
+             registerUser(){
                 let registerForm = document.getElementById('registerForm');
                 let form_data = new FormData(registerForm);
+                form_data.append("username", this.username);
+                form_data.append("password", this.password);
+                form_data.append("firstname", this.firstName);
+                form_data.append("lastname", this.lastName);
+                form_data.append("email", this.email);
+                form_data.append("location", this.location);
+                form_data.append("biography", this.biography);
+                form_data.append("photo", this.photo);
                 fetch("/api/v1/register", {
                     method: 'POST',
                     body: form_data,
-                    headers: {'X-CSRFToken': this.csrf_token}
+                    headers: {'X-CSRFToken': csrf_token.value}
+                    
                 })
                 .then(function (response) {
                     return response.json();
                 })
-                .then(function (data) {
-                    // display a success message
-                    
-                    if (data.status == 200){
+                .then(function (response) {   
+                    if (response.status == 200){
+                        console.log("successful");
+                       
                         
                     }
                     
                 })
                 .catch(function (error) {
-                    console.log(error);
+                    console.log('error');
                 });
-            },
-            getCsrfToken() {
-                let self = this;
-                fetch('/api/csrf-token')
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log(data);
-                    self.csrf_token = data.csrf_token;
-                })
             }
-        },
+            },
+            mounted() {
+                getCsrfToken();
+            },
+        }
         
-    }
     </script>
     
     <style>
-        .screen {		
-	background: linear-gradient(90deg, #675eac, #7C78B8);		
-	position: relative;	
-	height: 300px;
-	width: 360px;	
-	box-shadow: 0px 0px 24px #5C5696;
-}
 
     h5{
         margin-top:3%;

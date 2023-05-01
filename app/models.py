@@ -94,7 +94,7 @@ class Follow(db.Model):
 
 class User(db.Model):
 
-    __tablename__ = 'users'
+    __tablename__ = 'users_'
 
     id = db.Column(db.Integer(), primary_key = True)
     username = db.Column(db.String(128), unique = True)
@@ -104,7 +104,7 @@ class User(db.Model):
     email=db.Column(db.String(200), nullable = False)
     location=db.Column(db.String(200), nullable = False)
     biography=db.Column(db.String(300), nullable = False)
-    profile_photo=db.Column(db.String(250))
+    profile_photo=db.Column(db.Text())
     joined_on = db.Column(db.DateTime(), nullable = False)
 
 
@@ -129,7 +129,7 @@ class User(db.Model):
             "email": self.email,
             "location": self.location,
             "biography": self.biography,
-            "profile_photo":  url_for('getImage', filename=self.profile_photo),
+            "profile_photo":  self.profile_photo,
             "joined_on": self.joined_on,
         }
     
