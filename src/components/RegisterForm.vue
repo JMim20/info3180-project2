@@ -1,5 +1,5 @@
-
-   <template>  
+<template>
+    <div id="error_message"></div>
     <h5> Register </h5>
     <div class= "register-container" > 
     <form @submit.prevent="registerUser" id="registerForm" method="POST" enctype="miultipart/form-data" >
@@ -145,13 +145,6 @@
     </script>
     
     <style>
-        .screen {		
-	background: linear-gradient(90deg, #675eac, #7C78B8);		
-	position: relative;	
-	height: 300px;
-	width: 360px;	
-	box-shadow: 0px 0px 24px #5C5696;
-}
 
     h5{
         margin-top:3%;
