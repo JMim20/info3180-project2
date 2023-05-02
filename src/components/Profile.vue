@@ -21,10 +21,7 @@
     </div>
     <div class="container"> 
         <div class="gallery">
-            <div class="gallery-item" tabindex="0">
-                <img src="/src/assets/bio.jpg" class="gallery-image" alt="">
-            </div>
-            <div class="gallery-item" tabindex="0">
+            <div class="gallery-item" tabindex="1">
                  <img src="/src/assets/bio2.jpg" class="gallery-image" alt="">
             </div>
             <div class="gallery-item" tabindex="0">

@@ -2,7 +2,7 @@
     <div id="error_message"></div>
     <h5> Register </h5>
     <div class= "register-container" > 
-    <form @submit.prevent="registerUser" id="registerForm" method="POST" enctype="miultipart/form-data" >
+    <form @submit.prevent="registerUser" id="registerForm" method="POST" enctype="multipart/form-data">
     <div class ="registerform">
         <div class="registerfield col">
         <label for="username">Username</label>
@@ -72,7 +72,7 @@
         placeholder="Enter biography"
         required>
     </div><br>
-        <input id="file" name="photo" type="file" class="submits" required>
+        <input id="file" name="profile_photo" type="file" class="submits" required>
         <button type="submit" class="submit-btn" onclick="window.location.href='/login'"> Register </button>
     </div>
     </form>
@@ -107,14 +107,7 @@
              registerUser(){
                 let registerForm = document.getElementById('registerForm');
                 let form_data = new FormData(registerForm);
-                form_data.append("username", this.username);
-                form_data.append("password", this.password);
-                form_data.append("firstname", this.firstName);
-                form_data.append("lastname", this.lastName);
-                form_data.append("email", this.email);
-                form_data.append("location", this.location);
-                form_data.append("biography", this.biography);
-                form_data.append("photo", this.photo);
+
                 fetch("/api/v1/register", {
                     method: 'POST',
                     body: form_data,
@@ -122,10 +115,12 @@
                     
                 })
                 .then(function (response) {
+                    console.log("response");
+                    console.log(data);
                     return response.json();
                 })
-                .then(function (response) {   
-                    if (response.status == 200){
+                .then(function (data) {   
+                    if (data.status == 200){
                         console.log("successful");
                        
                         
