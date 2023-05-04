@@ -75,7 +75,7 @@ const router = createRouter({
 })
 // routing and redirecting all users according to authentication
 // routing and redirecting all users according to authentication
-router.beforeEach((to, from, next) => {
+/**router.beforeEach((to, from, next) => {
   if (to.meta.auth && !token) {
     next("/login")
   } else if (!to.meta.auth && token) {
@@ -83,7 +83,5 @@ router.beforeEach((to, from, next) => {
   } else {
     next()
   }
-})
+})**/
 export default router
-
-
