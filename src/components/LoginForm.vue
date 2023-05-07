@@ -1,6 +1,5 @@
 <template>
     <h5>Login </h5>
-    <h5>Login </h5>
     <div class="login-container">
         <form @submit.prevent="loginUser" id="loginForm" method="post" enctype="multipart/form-data">       
             <div id="LoginForm">
