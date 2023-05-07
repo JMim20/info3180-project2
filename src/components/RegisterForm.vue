@@ -80,15 +80,18 @@
     </template>
     <script set>
         import { ref, onMounted} from "vue";
-        let csrf_token = ref("");
+        let csrf = ref("");
+
         function getCsrfToken() {
             fetch('/api/v1/csrf-token')
             .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-                csrf_token.value = data.csrf_token;
+            .then(function(data) {
+                csrf = JSON.stringify(data);
+                console.log(csrf);
+
             });
-        }
+            return csrf;
+    }
         export default {
             data() {
                 return {
@@ -99,7 +102,8 @@
                     email: '',
                     location: '',
                     biography: '',
-                    photo: ''
+                    profile_photo: '',
+                    csrf:''
              };
 
                 },
@@ -108,10 +112,14 @@
                 let registerForm = document.getElementById('registerForm');
                 let form_data = new FormData(registerForm);
 
+                let token=getCsrfToken();
+                var token_ =JSON.parse(token);
+                let mytoken=token_["csrf_token"]
+
                 fetch("/api/v1/register", {
                     method: 'POST',
                     body: form_data,
-                    headers: {'X-CSRFToken': csrf_token.value}
+                    headers: {'X-CSRFToken': mytoken}
                     
                 })
                 .then((response) => {
@@ -124,6 +132,7 @@
                 })
                 .catch(function (error) {
                     console.log('error');
+
                 });
             }
             },

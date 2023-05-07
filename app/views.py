@@ -87,11 +87,11 @@ def register():
             location = form.location.data
             biography = form.biography.data
             profile_photo = form.profile_photo.data
-            
+            print(profile_photo)
             filename= secure_filename(profile_photo.filename)
             profile_photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-            newUser= User(username,password, firstname, lastname, email, location, biography,  filename)
+            newUser= User(username,password, firstname, lastname, email, location, biography,  profile_photo=filename)
             db.session.add(newUser)
             db.session.commit()
             
@@ -191,9 +191,6 @@ def logout():
 @requires_auth
 @login_required
 def create_post (user_id):
-@requires_auth
-@login_required
-def create_post (user_id):
     form = NewPostForm()
     if request.method == "POST" and form.validate_on_submit():
        
@@ -237,7 +234,8 @@ def getUser_post (user_id):
 
     
 #getting Userp ost       
-""" @app.route('/api/users/<user_id>/posts', methods = ['GET'])
+""" 
+@app.route('/api/users/<user_id>/posts', methods = ['GET'])
 def getUser_post (user_id):
     if request.method == "GET":
         auth = request.headers.get('Authorization', None)
@@ -268,8 +266,6 @@ def getUser_post (user_id):
 
         return jsonify(d=d)
     return jsonify({"Post" : "Not Valid"})
- """
- """
 
 """ Create a Follow relationship between the current user and the target user"""
 

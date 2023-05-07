@@ -13,6 +13,8 @@ SECRET_KEY= 'Som3$ec5etK*y'
 app = Flask(__name__)
 app.config.from_object(Config)
 
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 csrf = CSRFProtect(app)
 
 db = SQLAlchemy(app)
