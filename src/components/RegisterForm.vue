@@ -73,7 +73,7 @@
         required>
     </div><br>
         <input id="file" name="profile_photo" type="file" class="submits" required>
-        <button type="submit" class="submit-btn" onclick="window.location.href='/login'"> Register </button>
+        <button type="submit" class="submit-btn"> Register </button>
     </div>
     </form>
     </div>
@@ -114,18 +114,13 @@
                     headers: {'X-CSRFToken': csrf_token.value}
                     
                 })
-                .then(function (response) {
-                    console.log("response");
-                    console.log(data);
-                    return response.json();
-                })
-                .then(function (data) {   
-                    if (data.status == 200){
-                        console.log("successful");
-                       
-                        
-                    }
-                    
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("HTTP status " + response.status);
+                }  else{
+                    this.$router.push({ path: '/login' })
+                }
+                
                 })
                 .catch(function (error) {
                     console.log('error');

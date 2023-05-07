@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import RegisterForm from '../components/RegisterForm.vue'
 import LoginForm from '../components/LoginForm.vue'
 import ExploreView from '../views/ExploreView.vue'
+import Profile from '../components/Profile.vue'
 const token = localStorage.getItem("token")
 
 const router = createRouter({
@@ -14,60 +15,36 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/register',
-      name: 'register',
-      //Accepts user information and saves it to the database
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/RegisterView.vue'),
-      meta: {auth: false}
+     path: '/register',
+     name: 'register',
+     component: () => import('../views/RegisterView.vue'),
+     meta: {auth: false}
     },
     {
       path: '/login',
       name: 'login',
-      //Accepts login credentials as username and password
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import('../views/LoginView.vue'),
       meta: {auth: false}
     },
     {
       path: '/explore',
       name: 'explore',
-      //View/Explore all posts by all users
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/ExploreView.vue'),
+      component: ExploreView.vue,
       meta: {auth: true}
     },
     {
-      path: '/profile',
+      path: '/users/{user_id}',
       name: 'profile',
-      //View/Explore all posts by all users
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../components/Profile.vue')
+      component: Profile.vue
     },
     {
       path: '/logout',
       name: 'logout',
-      //View/Explore all posts by all users
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import('../views/Logout.vue')
     },
     {
       path: '/posts/new',
       name: 'newpost',
-      //View/Explore all posts by all users
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import('../components/NewPostForm.vue')
     }
   ]

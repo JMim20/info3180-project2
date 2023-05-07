@@ -1,82 +1,80 @@
 <template>
-    <H5>Login </H5>
+    <h5>Login </h5>
     <div class="login-container">
         <form @submit.prevent="loginUser" id="loginForm" method="post" enctype="multipart/form-data">       
             <div id="LoginForm">
                 <label for="username">Username</label>
-                <input 
-                id="username" 
-                 name="username" 
-                 type="text" 
-                 v-model="title"
-                 placeholder="Enter username"
-                 required
-                 />
-                 
+                <input id="username" name="username" type="text" placeholder="Enter username" required/>
                 <label for="password">Password</label>
-                <input 
-                 id="password"
-                 name="password"
-                 type="password"
-                 v-model="title"
-                placeholder="Enter password"
-                required
-                />
-                <button type="submit" class="submit-btn">LOGIN</button>
+                <input id="password" name="password" type="password" placeholder="Enter password" required/>
+                <input type="hidden" name="token" v-bind:value="csrf">
+                <button type="submit" class="submit-btn" >LOGIN</button>
       
                 </div>
         </form>
-        <p v-if="showError" id="error">Username or Password is incorrect</p>
     </div>
 </template>
+
 <script set>
     import { ref, onMounted} from "vue";
-    let csrf_token = ref("");
-        function getCsrfToken() {
-            fetch('/api/v1/csrf-token')
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-                csrf_token.value = data.csrf_token;
-            });
-        }
+    let csrf = ref("");
+
+    function getCsrfToken() {
+        fetch('/api/v1/csrf-token')
+        .then((response) => response.json())
+        .then(function(data) {
+            csrf = JSON.stringify(data);
+            console.log(csrf);
+
+        });
+        return csrf;
+    }
         export default {
             data() {
                 return {
                     username:'',
-                    password:''
+                    password:'',
+                    csrf:''
+                    
 
                 };
             },
        
-        methods : {
-            loginUser(){
+        methods : { 
+             loginUser(){
                 let loginForm = document.getElementById('loginForm');
                 let form_data = new FormData(loginForm);
+                let token =getCsrfToken();
+                var token_ =JSON.parse(token);
+                let mytoken=token_["csrf_token"]
+                console.log(mytoken);
+                
                 fetch("/api/v1/auth/login", {
-                    method: 'POST',
-                    body: form_data,
-                    headers: {'X-CSRFToken': this.csrf_token}
+                     method: 'POST',
+                     body: form_data,
+                     headers: {'X-CSRFToken': mytoken}
+             })
+                     
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("HTTP status " + response.status);
+                }  else{
+                    this.$router.push({ path: '/explore' })
+                }
                 })
-                .then(function (response) {
-                    return response.json();
+                .catch((error) =>{
+                    console.log(error);
                 })
-                .then(function (data) {
-                    // display a success message
-                    if (data.status == 200){
-                        
-                    }
-                    
-                })
-                .catch(function (error) {
-                    console.log('error');
-                });
-            }
-        },
-        mounted() {
-                    getCsrfToken();
-                },
+             }
+    },
+
+             mounted() {
+                getCsrfToken();
+            },
         }
+    
+   
+    
 </script>
 <style>
 h5{

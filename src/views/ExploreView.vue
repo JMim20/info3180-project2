@@ -1,7 +1,7 @@
 <template>
   <div class="explore-container" v-if="renderComponent">
       <div class="explore-left">
-           <div v-for="post in posts"  class="card">
+           <div v-for="post in posts" :key="post.id" class="card">
 
             <RouterLink :to="'/users/' + post.user_id">
             <p class="explore-user">{{ post.username }}</p>

@@ -1,40 +1,81 @@
 <template>
     <div class="container">
-        <div class="profile">
-            <div class="profile-image">
-                <img src="/src/assets/profile_photo.jpg" alt="">
+        <div v-for="user in users_" :key='user.id' class="profile">
+            <div v-if="user_id == user.id" class="profile-image">
+                <img v-bind:src="`../app/Uploads/{{user.profile_photo}}`" alt="">
              </div>
              <div class="profile-user-settings">
-                <h1 class="profile-user-name">Tanique</h1>
+                <h1 class="profile-user-name">{{user.username}}</h1>
                 <button class="follow-btn">Follow</button>
             </div>
             <div class="stats">
                 <ul>
-                    <li><span class="profile-stat-count">164</span> posts</li>
-                    <li><span class="profile-stat-count">188</span> followers</li>
+                    <li v-for="post in posts" :key="post.id"><span class="profile-stat-count">164</span> posts</li>
+                    <li v-for="follow in follows" :key="follow.id"><span class="profile-stat-count">188</span> followers</li>
                 </ul>
            </div>
             <div class="profile-bio">
-                <p>I'm doing this for my web development project</p>
+                <p>{{ user.biography }}</p>
             </div>
         </div>
     </div>
     <div class="container"> 
         <div class="gallery">
-            <div class="gallery-item" tabindex="1">
+            <div tabindex="1">
                  <img src="/src/assets/bio2.jpg" class="gallery-image" alt="">
             </div>
-            <div class="gallery-item" tabindex="0">
-                <img src="/src/assets/bio3.jpg" class="gallery-image" alt="">
-                <div class="gallery-item-type">
-                    <span class="visually-hidden">Gallery</span><i class="fas fa-clone" aria-hidden="true"></i>
-                 </div>
           </div>
-    </div>
     </div>
 </template>
 
-<script>
+<script set>
+     import { ref, onMounted} from "vue";
+        let csrf_token = ref("");
+        function getCsrfToken() {
+            fetch('/api/v1/csrf-token')
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                csrf_token.value = data.csrf_token;
+            });
+        }
+        export default {
+            data() {
+                return {
+                    user_id:this.$route.params.user_id,
+                    username: '',
+                    biography:'',
+                    photo: ''
+             };
+
+                },
+            created() {
+                fetch('/api/profile', {
+                    method: 'GET',
+                    headers: {'X-CSRFToken': csrf_token.value,
+                    'Content-Type': "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem('token')}`}
+                    
+                })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {   
+                    if (data.status == 200){
+                        console.log("successful");
+                           
+                    }
+                    
+                })
+                .catch(function (error) {
+                    console.log('error');
+                });
+            },
+            mounted() {
+                getCsrfToken();
+            }
+        }
+        
 </script>
 
 <style>

@@ -5,6 +5,7 @@ from .config import Config
 from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
+from flask_jwt_extended import JWTManager
 
 UPLOAD_FOLDER = './app/Uploads'
 SECRET_KEY= 'Som3$ec5etK*y'
@@ -21,6 +22,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+jwt = JWTManager(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
