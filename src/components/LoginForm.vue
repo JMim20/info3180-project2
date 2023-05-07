@@ -1,5 +1,5 @@
 <template>
-    <H5>Login </H5>
+    <h5>Login </h5>
     <div class="login-container">
         <form @submit.prevent="loginUser" id="loginForm" method="post" enctype="multipart/form-data">       
             <div id="LoginForm">
@@ -29,18 +29,20 @@
         <p v-if="showError" id="error">Username or Password is incorrect</p>
     </div>
 </template>
-<script set>
+
+<script setup>
     import { ref, onMounted} from "vue";
     let csrf_token = ref("");
-        function getCsrfToken() {
-            fetch('/api/v1/csrf-token')
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-                csrf_token.value = data.csrf_token;
-            });
-        }
-        export default {
+
+    function getCsrfToken() {
+        fetch('/api/v1/csrf-token')
+        .then((response) => response.json())
+        .then((data) => {
+            console.log(data);
+            csrf_token.value = data.csrf_token;
+        });
+    }
+        /* export default {
             data() {
                 return {
                     username:'',
@@ -49,34 +51,42 @@
                 };
             },
        
-        methods : {
-            loginUser(){
-                let loginForm = document.getElementById('loginForm');
-                let form_data = new FormData(loginForm);
-                fetch("/api/v1/auth/login", {
-                    method: 'POST',
-                    body: form_data,
-                    headers: {'X-CSRFToken': this.csrf_token}
-                })
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (data) {
-                    // display a success message
-                    if (data.status == 200){
-                        
-                    }
-                    
-                })
-                .catch(function (error) {
-                    console.log('error');
-                });
+        methods : { */
+
+    const loginUser=() => {
+        let loginForm = document.getElementById('loginForm');
+        let form_data = new FormData(loginForm);
+    
+        fetch("/api/v1/auth/login", {
+            method: 'POST',
+            body: form_data,
+            headers: {
+                'X-CSRFToken': this.csrf_token
             }
-        },
-        mounted() {
-                    getCsrfToken();
-                },
-        }
+        })
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            // display a success message
+           /*  if (data.status == 200){
+                
+            } */
+            if("message" in data){
+                console.log(data);
+                successM.value =data.message
+                clearForm();  
+            }  
+        })
+        .catch(function (error) {
+            console.log('error');
+        });
+    }
+    
+    onMounted(() => {
+        getCsrfToken();
+    });
+    
 </script>
 <style>
 h5{

@@ -9,13 +9,12 @@ from app import app, db, login_manager
 from flask import render_template, jsonify, request, send_file, send_from_directory, url_for,flash,redirect,url_for,Blueprint
 from flask_wtf.csrf import generate_csrf
 import os
-from .models import Post, Like,Follow, User
+from app.models import Post, Like,Follow, User
 from werkzeug.utils import secure_filename
 from .forms import RegisterForm, LoginForm, NewPostForm
 from flask_wtf.csrf import generate_csrf
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import login_user, logout_user, current_user, login_required
-import datetime
 import jwt
 from functools import wraps
 
@@ -25,6 +24,7 @@ def requires_auth(f):
   @wraps(f)
   def decorated(*args, **kwargs):
     auth = request.headers.get('Authorization', None)
+    
     if not auth:
       return jsonify({'code': 'authorization_header_missing', 'description': 'Authorization header is expected'}), 401
 
@@ -108,8 +108,6 @@ def register():
         
 #Login Route- Accepts login credentials as username and password
 
-...
-
 @app.route('/api/v1/auth/login', methods=['POST'])
 def login():
     form = LoginForm()
@@ -121,10 +119,12 @@ def login():
     
         if user is not None and check_password_hash(user.password, password):
             login_user(user)
+            token = jwt.encode(data, app.config["SECRET_KEY"], algorithm="HS256")
             return jsonify({
                 "message": "logged in Successfully!",
-                "username": username,
-                "password": password
+                # "username": username,
+                # "password": password
+                "token": token
             })
     else:
         return jsonify({'errors': form_errors(form)})
@@ -143,7 +143,7 @@ def logout():
             })
  """
 
-@app.route("/api/auth/logout", methods=["GET"])
+@app.route("/api/auth/logout", methods=['POST'])
 @login_required
 def logout():
     logout_user()
@@ -152,28 +152,41 @@ def logout():
     response = "You were logged out successfully."
     return jsonify(message=response)
 
+#we need a get user
 
+
+#creating a post
 @app.route('/api/users/<user_id>/posts', methods = ['GET', 'POST'])
-def post (user_id):
+@requires_auth
+@login_required
+def create_post (user_id):
     form = NewPostForm()
     if request.method == "POST" and form.validate_on_submit():
-        photo = form.photo.data
+       
         caption = form.caption.data
-        date = datetime.datetime.now()
-        date = date.strftime("%d %b %Y")
+        photo = form.photo.data
+        # date = datetime.datetime.now()
+        # date = date.strftime("%d %b %Y")
 
-        file = secure_filename(photo.filename)
-        photo.save(os.path.join(
-            app.config['UPLOAD_FOLDER'], file))
+        file= secure_filename(photo.filename)
+        photo.save(os.path.join(app.config['UPLOAD_FOLDER'], file))
 
-        path = url_for('static', filename= "images/photos/"+file)
+        #path = url_for('static', filename= "images/photos/"+file)
 
-        post = Post(user_id=int(user_id), photo=path, caption=caption, created_on=date)
+        post = Post(user_id, photo, caption)
         db.session.add(post)
         db.session.commit()
         
-        return jsonify({"Post" : "yes"})
+        return jsonify({"message" : "post has been uploaded"})
+    else:
+        return jsonify({'errors': form_errors(form)})
+    
 
+
+    
+#getting Userp ost       
+""" @app.route('/api/users/<user_id>/posts', methods = ['GET'])
+def getUser_post (user_id):
     if request.method == "GET":
         auth = request.headers.get('Authorization', None)
         parts = auth.split()
@@ -203,7 +216,7 @@ def post (user_id):
 
         return jsonify(d=d)
     return jsonify({"Post" : "Not Valid"})
-
+ """
 
 """ Create a Follow relationship between the current user and the target user"""
 

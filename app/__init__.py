@@ -14,11 +14,6 @@ app.config.from_object(Config)
 
 csrf = CSRFProtect(app)
 
-app.secret_key = SECRET_KEY
-app.config['SQLALCHEMY_DATABASE_URI'] ='postgresql://postgres:Postgres@localhost/Project2'
-
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 

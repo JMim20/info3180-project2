@@ -1,7 +1,7 @@
-<template>
+<!-- <template>
   <div class="explore-container" v-if="renderComponent">
       <div class="explore-left">
-           <div v-for="post in posts"  class="card">
+           <div v-for="post in posts" v-bind:key="post.id" class="card">
 
             <RouterLink :to="'/users/' + post.user_id">
             <p class="explore-user">{{ post.username }}</p>
@@ -30,6 +30,31 @@
       </div>
       <RouterLink  class="explore-btn" to="/posts/new">New Post</RouterLink>
   </div>
+</template> -->
+
+<template> 
+  <div class="container">
+    <div class="row g-5 justify-content-evenly">
+      <div v-for="movie in movies" :key="movie.id" class="col-6">
+        <div class="card " >
+          <div class="row g-0">
+            <div class="col-6 col-md-5">
+              <img :src="movie.poster" alt="movie.title"  class="card-img img-fluid"/>
+            </div>
+            <div class="col-6  col-md-7">
+              <div class="card-body d-flex flex-column">
+                <div class="h-100">
+                  <h5 class="card-title">{{ movie.title }}</h5>
+                  <p class="card-text">{{ movie.description }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
 </template>
 
 
