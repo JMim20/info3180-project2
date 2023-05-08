@@ -12,8 +12,9 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     caption = db.Column(db.String(200))
     photo=db.Column(db.String(250))
-    user_id = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     created_on=db.Column(db.DateTime(), nullable=False)
+    likes = db.relationship("Likes", backref="posts")
 
 
     def __init__(self, caption, photo, user_id):
@@ -106,6 +107,12 @@ class User(db.Model):
     biography=db.Column(db.String(300), nullable = False)
     profile_photo=db.Column(db.Text(),nullable = False)
     joined_on = db.Column(db.DateTime(), nullable = False)
+
+    #Relations References
+    posts = db.relationship("Posts", backref="user")
+    liked = db.relationship("Likes", backref="user")
+    following = db.relationship("Follows", backref="follower", foreign_keys="Follows.follower_id")
+    currentuser = db.relationship("Follows", backref="currentuser", foreign_keys="Follows.user_id")
 
 
     def __init__(self, username, password, firstname, lastname, email, location, biography, profile_photo):

@@ -6,8 +6,6 @@ from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 
-UPLOAD_FOLDER = './app/Uploads'
-SECRET_KEY= 'Som3$ec5etK*y'
 
 app = Flask(__name__)
 app.config.from_object(Config)

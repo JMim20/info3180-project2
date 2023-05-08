@@ -1,38 +1,53 @@
 <template>
-    <h5>Login </h5>
-    <div class="login-container">
-        <form @submit.prevent="loginUser" id="loginForm" method="post" enctype="multipart/form-data">       
-            <div id="LoginForm">
-                <label for="username">Username</label>
-                <input 
-                id="username" 
-                 name="username" 
-                 type="text" 
-                 v-model="title"
-                 placeholder="Enter username"
-                 required
-                 />
-                 
-                <label for="password">Password</label>
-                <input 
-                 id="password"
-                 name="password"
-                 type="password"
-                 v-model="title"
-                placeholder="Enter password"
-                required
-                />
-                <button type="submit" class="submit-btn">LOGIN</button>
-      
+    <div class="loginPage">
+        <h1>Login </h1>
+        <div class="login-container">
+            <form @submit.prevent="loginUser" id="loginForm" method="post" enctype="multipart/form-data">       
+                <div class="alert alert-danger" v-if="errorM">
+                    <ul>
+                        <li v-for="aError in errorM" v-bind:key="aError.id" >
+                            {{ aError }}
+                        </li>
+                    </ul>
                 </div>
-        </form>
-        <p v-if="showError" id="error">Username or Password is incorrect</p>
+                <div id="LoginForm">
+                    <label for="username">Username</label>
+                    <input 
+                    id="username" 
+                    name="username" 
+                    type="text" 
+                    v-model="title"
+                    placeholder="Enter username"
+                    required
+                    />
+                    
+                    <label for="password">Password</label>
+                    <input 
+                    id="password"
+                    name="password"
+                    type="password"
+                    v-model="title"
+                    placeholder="Enter password"
+                    required
+                    />
+                    </div>
+                    <div>
+                        <button type="submit" class="submit-btn">LOGIN</button>
+                    </div>
+                    
+            </form>
+            <p v-if="showError" id="error">Username or Password is incorrect</p>
+        </div>
     </div>
 </template>
 
 <script setup>
     import { ref, onMounted} from "vue";
+    import {useRouter} from "vue-router";
+    const router = useRouter()
     let csrf_token = ref("");
+    let successM = ref("");
+    let errorM =ref("");
 
     function getCsrfToken() {
         fetch('/api/v1/csrf-token')
@@ -42,16 +57,6 @@
             csrf_token.value = data.csrf_token;
         });
     }
-        /* export default {
-            data() {
-                return {
-                    username:'',
-                    password:''
-
-                };
-            },
-       
-        methods : { */
 
     const loginUser=() => {
         let loginForm = document.getElementById('loginForm');
@@ -68,18 +73,18 @@
             return response.json();
         })
         .then(function (data) {
-            // display a success message
-           /*  if (data.status == 200){
-                
-            } */
-            if("message" in data){
-                console.log(data);
-                successM.value =data.message
-                clearForm();  
-            }  
+            console.log(data);
+            successM.value=data;
+            localStorage.setItem("token", data.token)
+            router.push({ path : '/explore' })
+                        .then(() =>{
+                             router.go() 
+                            });
+           
         })
         .catch(function (error) {
             console.log('error');
+            errorM.value=data.errors;
         });
     }
     

@@ -4,12 +4,9 @@
     </div>
 </template>
 
-<script >
-import LoginForm from "../components/LoginForm.vue";
-export default{
-    name:"LoginView",
-    components:{ LoginForm}
-}
+<script setup>
+    import LoginForm from '@/components/LoginForm.vue';
 </script>
+
 <style>
 </style>

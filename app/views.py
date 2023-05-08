@@ -6,7 +6,7 @@ This file creates your application.
 """
 
 from app import app, db, login_manager
-from flask import render_template, jsonify, request, send_file, send_from_directory, url_for,flash,redirect,url_for,Blueprint
+from flask import render_template, jsonify, request, send_file, send_from_directory, url_for,flash,redirect,url_for,Blueprint, session
 from flask_wtf.csrf import generate_csrf
 import os
 from app.models import Post, Like,Follow, User
@@ -119,6 +119,12 @@ def login():
     
         if user is not None and check_password_hash(user.password, password):
             login_user(user)
+
+            data = {}
+            data['id'] = user.id
+            data['username'] = user.username
+            session['id'] = user.id
+
             token = jwt.encode(data, app.config["SECRET_KEY"], algorithm="HS256")
             return jsonify({
                 "message": "logged in Successfully!",
@@ -134,29 +140,44 @@ def load_user(id):
     return db.session.execute(db.select(User).filter_by(id=id)).scalar()
  """
 #Logout a user
-""" @app.route("/api/v1/auth/logout", method =['POST'])
+@app.route("/api/v1/auth/logout", method =['POST'])
 @login_required
 def logout():
-    logout_user()
     return jsonify({
                 "message": "You have been logged out!",
             })
- """
 
-@app.route("/api/auth/logout", methods=['POST'])
-@login_required
-def logout():
-    logout_user()
-
-    #Flash message for successful logout
-    response = "You were logged out successfully."
-    return jsonify(message=response)
 
 #we need a get user
+@app.route("/api/v1/users/<userId>", methods=["GET"])
+def get_user(user_id):
+    if (user_id == "currentuser"):
+        token = request.headers["Authorization"].split(" ")[1]
+        user = jwt.decode(token, app.config['SECRET_KEY'], algorithms="HS256")
+        userId = user['id']
+
+    user = User.query.filter_by(id=userId).first()
+    
+    if (not user):
+        return jsonify({
+            "error": "User not found!"
+        }), 400
+    return jsonify({
+            "id": user.id,
+            "username": user.username,
+            "password": user.password,
+            "firstname": user.firstname,
+            "lastname": user.lastname,
+            "email": user.email,
+            "location": user.location,
+            "biography": user.biography,
+            "profile_photo": "/api/v1/photo/" + user.profile_photo,
+            "joined_on": user.joined_on
+        }), 200
 
 
 #creating a post
-@app.route('/api/users/<user_id>/posts', methods = ['GET', 'POST'])
+@app.route('/api/users/<user_id>/posts', methods = ['POST'])
 @requires_auth
 @login_required
 def create_post (user_id):
@@ -168,12 +189,12 @@ def create_post (user_id):
         # date = datetime.datetime.now()
         # date = date.strftime("%d %b %Y")
 
-        file= secure_filename(photo.filename)
-        photo.save(os.path.join(app.config['UPLOAD_FOLDER'], file))
+        filename= secure_filename(photo.filename)
+        photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
         #path = url_for('static', filename= "images/photos/"+file)
 
-        post = Post(user_id, photo, caption)
+        post = Post(caption, photo, user_id)
         db.session.add(post)
         db.session.commit()
         
@@ -184,39 +205,27 @@ def create_post (user_id):
 
 
     
-#getting Userp ost       
-""" @app.route('/api/users/<user_id>/posts', methods = ['GET'])
-def getUser_post (user_id):
-    if request.method == "GET":
-        auth = request.headers.get('Authorization', None)
-        parts = auth.split()
-        token = parts[1]
-        myId = (jwt.decode(token, 'app.config[SECRET_KEY]')['user_id'])
-        
-        user = User.query.filter_by(id=int(user_id)).first()
-        posts = Post.query.filter_by(user_id=int(user_id)).count()
-        follows = Follow.query.filter_by(user_id=int(user_id)).count()
-        followers = Follow.query.filter_by(user_id=int(user_id))
-        followersList = []
-        for follower in followers:
-            followersList.append(follower.user_id)
+#getting User post 
 
-        following = myId in followersList
-        d = {}
-        d['uid'] = user.id
-        d['pphoto'] = user.profile_photo
-        d['fname'] = user.firstname
-        d['lname'] = user.lastname
-        d['location'] = user.location
-        d['bio'] = user.biography
-        d['date'] = user.joined_on
-        d['posts'] = posts
-        d['follows'] = follows
-        d['following'] = following
+@app.route("/api/v1/users/<userId>/posts", methods=["GET"])
+@requires_auth
+def getUser_posts(user_id):
 
-        return jsonify(d=d)
-    return jsonify({"Post" : "Not Valid"})
- """
+    user = User.query.filter_by(id=user_id).first()
+    posts = user.posts
+    postInfo= []
+    for post in posts:
+        obj = {
+            "photo": "/api/v1/photo/" + post.photo,
+            "caption": post.caption
+        }
+        postInfo.append(obj)
+    return jsonify({
+        "posts": postInfo
+    })
+
+
+
 
 """ Create a Follow relationship between the current user and the target user"""
 
@@ -249,41 +258,24 @@ def follow (user_id):
     return jsonify({"Follow" : "failed"})
 
 
-"""Return all posts for all users"""
-@app.route('/api/posts', methods = ['GET'])
-@requires_auth
-def all_post ():
-    posts = db.session.query(Post).all()
+#Returning all posts for all users
+@app.route("/api/v1/posts", methods=['GET'])
+def getAllPost():
+    if request.method == 'GET':
+        Addedposts=Post.query.all()
+        list_post =[]
+        for aPost in Addedposts:
+            posts={
+                "id": aPost.id,
+                "user_id": aPost.user_id,
+                "photo": "/api/v1/photo/"+ aPost.photo,
+                "caption": aPost.caption,
+                "created_at":aPost.created_at,
+                "likes":len(aPost.likes)
+            }    
+            list_post.append(posts)
+        return jsonify({'Addedposts':list_post})
     
-    auth = request.headers.get('Authorization', None)
-    parts = auth.split()
-    token = parts[1]
-    myId = (jwt.decode(token, 'app.config[SECRET_KEY]')['user_Id'])
-    
-    list2 = []
-    for post in posts:
-        d = {}
-        uid = post.user_id
-        user = User.query.filter_by(id=int(id)).first()
-        d['uid'] = uid
-        d['pphoto'] = user.profile_photo
-        d['user'] = user.username
-        d['pid'] = post.id
-        d['photo'] = post.photo
-        d['caption'] = post.caption
-        d['date'] = post.created_on
-        likes = Like.query.filter_by(post_id=int(post.id)).count()
-        likers = Like.query.filter_by(post_id=int(post.id))
-        likersList =[]
-        for like in likers:
-            likersList.append(like.user_id)
-        like = myId in likersList
-        d['likes'] = likes
-        d['like'] = like
-        list2.append(d)
-
-    data = dict(list(enumerate(list2)))
-    return jsonify(data=data)
 
 """Set a like on the current Post by the logged in User"""
 
@@ -303,39 +295,16 @@ def like (post_id):
     return jsonify({"Follow" : "failed"})
 
 
-"""Route for User to View Profile"""
-@app.route('/api/profile', methods = ['GET'])
-@requires_auth
-def profile():
-    if request.method == "GET":
-        auth = request.headers.get('Authorization', None)
-        parts = auth.split()
-        token = parts[1]
-        uid = (jwt.decode(token, 'app.config[SECRET_KEY]')['user_Id'])
-        user = User.query.filter_by(id=int(uid)).first()
-        followers = Follow.query.filter_by(user_id=int(uid)).count()
-        following = Follow.query.filter_by(follower_id=int(uid)).count()
-        d = {}
-        d['pphoto'] = user.profile_photo
-        d['user'] = user.username
-        d['fname'] = user.firstname
-        d['lname'] = user.lastname
-        d['location'] = user.location
-        d['email'] = user.email
-        d['bio'] = user.biography
-        d['date'] = user.joined_on
-        d['followers'] = followers
-        d['following'] = following
-
-        return jsonify(d=d)
-    return jsonify({"Profile" : "no"})
-    
 
 # user_loader callback. This callback is used to reload the user object from
 # the user ID stored in the session
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))
+
+@app.route("/api/v1/photo/<filename>", methods=['GET'])
+def get_image(filename):
+    return send_from_directory(os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER']), filename)
 
 ###
 # The functions below should be applicable to all Flask apps.

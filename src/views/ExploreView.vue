@@ -1,65 +1,37 @@
-<!-- <template>
+<template>
   <div class="explore-container" v-if="renderComponent">
-      <div class="explore-left">
-           <div v-for="post in posts" v-bind:key="post.id" class="card">
-
-            <RouterLink :to="'/users/' + post.user_id">
-            <p class="explore-user">{{ post.username }}</p>
-            </RouterLink>
-
-              <div class="explore-img">
-                  <img :src="post.photo">
-              </div>
-              
-              <div class="explore-desc">
-                  {{ post.caption }}
-              </div>
-
-
-              <div class="explore-stats">
-                    <div class="likes"  @click="() => likedPost(post.id)">
-                        <img src="heart.png">
-                        <div><span>{{ post.likes }}</span> likes</div>
-                    </div>
-
-                    <p class="explore-date">{{ post.created_on }}</p>
-              </div>
-          </div>
-
-          
-      </div>
-      <RouterLink  class="explore-btn" to="/posts/new">New Post</RouterLink>
-  </div>
-</template> -->
-
-<template> 
-  <div class="container">
-    <div class="row g-5 justify-content-evenly">
-      <div v-for="movie in movies" :key="movie.id" class="col-6">
-        <div class="card " >
-          <div class="row g-0">
-            <div class="col-6 col-md-5">
-              <img :src="movie.poster" alt="movie.title"  class="card-img img-fluid"/>
-            </div>
-            <div class="col-6  col-md-7">
-              <div class="card-body d-flex flex-column">
-                <div class="h-100">
-                  <h5 class="card-title">{{ movie.title }}</h5>
-                  <p class="card-text">{{ movie.description }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
+    <div class="explore-left">
+      <div v-for="post in posts" v-bind:key="post.id" class="card">
+        <div class="explore-user">
+          <RouterLink class="link" :to="{path:'/users/' + post.user_id, component: () => ('../views/UserProfileView.vue')}">
+            <img :src="post.profile_photo"> 
+            <p >{{ post.username }}</p>
+          </RouterLink>
         </div>
-      </div>
+
+        <div class="explore-img">
+            <img :src="post.photo">
+        </div>
+        
+        <div class="explore-desc">
+            {{ post.caption }}
+        </div>
+
+        <div class="explore-stats">
+              <div class="likes"  @click="() => likedPost(post.id)">
+                  <img src="heart.png" alt="red heart, post liked">
+                  <div><span>{{ post.likes }}</span> likes</div>
+              </div>
+
+              <p class="explore-date">{{ post.created_on }}</p>
+        </div>
+      </div>   
     </div>
+    <div class="explore-right"> 
+      <RouterLink  class="explore-btn" to="/posts/new">New Post</RouterLink>
+    </div>   
   </div>
-  
 </template>
-
-
-
-
 
 
 
@@ -73,14 +45,34 @@
   let csrf_token = ref("")
   let result = ref([])
 
+  const getCsrfToken = () => {
+        fetch('/api/v1/csrf-token')
+        .then(res => res.json())
+        .then(data => {
+            csrf_token.value = data.csrf_token
+        })
+    }
+
   onMounted(() => {
       fetchPosts().then(data => posts.value = data)
       getCsrfToken()
   })
 
-  
+  const forceRender = async () => {
+        renderComponent.value = false;
+        await nextTick();
+        renderComponent.value = true;
+  };
 
-  const fetchPosts = () => {
+  const fetchUser = async(id) => {
+        
+        const res = await fetch(`/api/v1/users/${id}`)
+        const data = await res.json()
+        return data
+        
+    }
+
+  const fetchPosts = async() => {
         fetch('/api/v1/posts', {
             method: 'GET',
             headers: {
