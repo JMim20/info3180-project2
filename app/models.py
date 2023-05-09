@@ -95,7 +95,7 @@ class Follow(db.Model):
 
 class User(db.Model):
 
-    __tablename__ = 'users_'
+    __tablename__ = 'users'
 
     id = db.Column(db.Integer(), primary_key = True)
     username = db.Column(db.String(128), unique = True)
@@ -112,7 +112,7 @@ class User(db.Model):
     posts = db.relationship("Posts", backref="user")
     liked = db.relationship("Likes", backref="user")
     following = db.relationship("Follows", backref="follower", foreign_keys="Follows.follower_id")
-    currentuser = db.relationship("Follows", backref="currentuser", foreign_keys="Follows.user_id")
+    currentuser = db.relationship("Follows", backref="currentuser", foreign_keys="Follow.users_id")
 
 
     def __init__(self, username, password, firstname, lastname, email, location, biography, profile_photo):

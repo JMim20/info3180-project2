@@ -132,6 +132,13 @@ def login():
                 # "password": password
                 "token": token
             })
+        else:
+            return jsonify({
+                "errors": "Username or Password Incorrect!",
+                # "username": username,
+                # "password": password
+                "token": token
+            })
     else:
         return jsonify({'errors': form_errors(form)})
     
@@ -139,13 +146,12 @@ def login():
 def load_user(id):
     return db.session.execute(db.select(User).filter_by(id=id)).scalar()
  """
-#Logout a user
+""" #Logout a user
 @app.route("/api/v1/auth/logout", method =['POST'])
-@login_required
 def logout():
     return jsonify({
                 "message": "You have been logged out!",
-            })
+            }) """
 
 
 #we need a get user
@@ -279,7 +285,7 @@ def getAllPost():
 
 """Set a like on the current Post by the logged in User"""
 
-@app.route('/api/posts/<post_id>/like', methods = ['POST'])
+""" @app.route('/api/posts/<post_id>/like', methods = ['POST'])
 def like (post_id):
     if request.method == "POST":
         auth = request.headers.get('Authorization', None)
@@ -291,8 +297,8 @@ def like (post_id):
             like = Like(user_id=int(liker['user_Id']),post_id=int(post_id))
             db.session.add(like)
             db.session.commit()
-            return all_post()
-    return jsonify({"Follow" : "failed"})
+            return getAllPost()
+    return jsonify({"Follow" : "failed"}) """
 
 
 
